@@ -1,15 +1,14 @@
 const path = require ('path');
 const fs = require('fs');
 const { resolve } = require ('path');
-const { copyFile } = require ('fs');
+
 const dist = path.join (__dirname, 'project-dist');
 const components = path.resolve (__dirname, 'components');
 const styles = path.resolve (__dirname, 'styles');
 const assets = path.resolve (__dirname, 'assets');
-const copy = path.resolve (dist, 'assets');
+const copy = path.join (dist, 'assets');
 
 async function componentsBuild () {
-    await fs.promises.mkdir(dist), {recursive: true};
     const template = await fs.promises.readFile (resolve (__dirname, 'template.html'), 'utf-8');
     const componentsItems = await fs.promises.readdir (components);
     let compData = template;
@@ -55,9 +54,10 @@ async function updateFolder(assets, copy) {
 
 async function Build() {
     await fs.promises.rm(dist, { recursive: true, force: true });
+    await fs.promises.mkdir(dist), {recursive: true};
+    updateFolder(assets, copy);
     componentsBuild();
     stylesBuild();
-    updateFolder(assets, copy);
 }
 
 Build();
